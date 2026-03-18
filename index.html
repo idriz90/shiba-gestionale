@@ -1497,8 +1497,8 @@ function stampaPdf(){
   var p=state.preventivi.find(x=>x.id===state.prevCorrente);
   var titolo=p?(p.cliente||'Cliente').replace(/\s+/g,'_')+'_preventivo_'+(p.descrizione||'').replace(/\s+/g,'_').slice(0,30):'preventivo';
   var content=document.getElementById('pdfContent').innerHTML;
-  var css='<style>*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Arial,sans-serif;font-size:14px;color:#111;line-height:1.5}button{display:none!important}</style>';
-  var html='<!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>'+titolo+'</title>'+css+'</head><body>'+content+'<script>window.onload=function(){window.print();}<\/script></body></html>';
+  var css='<style>*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Arial,sans-serif;font-size:14px;color:#111;line-height:1.5}#close-btn{position:fixed;top:12px;right:12px;background:#1a3c6e;color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:1.2rem;cursor:pointer;z-index:999;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3)}@media print{#close-btn{display:none!important}}</style>';
+  var html='<!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>'+titolo+'</title>'+css+'</head><body><button id="close-btn" onclick="window.close()">×</button>'+content+'<script>window.onload=function(){window.print();}<\/script></body></html>';
   w.document.open();
   w.document.write(html);
   w.document.close();

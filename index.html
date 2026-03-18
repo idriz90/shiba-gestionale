@@ -425,7 +425,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
     <button class="btn btn-outline btn-full" style="margin-bottom:14px" onclick="apriNuovaVoce()">+ Aggiungi voce</button>
     <div class="totale-box" id="totaleBox"></div>
     <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="btn btn-blue" style="flex:1" onclick="mostraPdf()">📄 PDF</button>
+      <button class="btn btn-blue" style="flex:1" onclick="stampaPdf()">📄 PDF</button>
       <button class="btn btn-outline btn-sm" onclick="modificaPreventivo()">✏️</button>
       <button class="btn btn-red btn-sm" onclick="eliminaPreventivo()">🗑</button>
     </div>
@@ -646,7 +646,7 @@ function calcolaTotale(p){
   const c=p.cantiere||{};
   const speseReali=(c.spese||[]).reduce((s,x)=>s+Number(x.importo||0),0);
   const oreH=(c.ore||[]).reduce((s,o)=>s+Number(o.ore||0),0);
-  return{imponibile,costoTot,iva,totIva,margine,speseReali,oreH};
+  return{imponibile,imponibileNetto,scontoEuro,costoTot,iva,totIva,margine,speseReali,oreH};
 }
 
 function calcolaAvanzamento(p){
@@ -726,7 +726,7 @@ function salvaPreventivo(){
     state.prevCorrente=np.id;
   }
   save();renderPreventivi();closeModal('ovPreventivo');
-  if(!id)apriDettaglio(state.prevCorrente);
+  apriDettaglio(state.prevCorrente);
   toast('✅ Preventivo salvato');
 }
 
@@ -1453,56 +1453,52 @@ function renderCalendario(){
 // ══════════════════════════════════════════════════════
 // PDF
 // ══════════════════════════════════════════════════════
-function mostraPdf(){
+function stampaPdf(){
+  var w=window.open('','_blank');
+  if(!w){toast('Consenti i popup nel browser');return;}
   const p=state.preventivi.find(x=>x.id===state.prevCorrente);if(!p)return;
   const t=calcolaTotale(p);
   const logoHtml=`<img src="${LOGO_B64}" style="height:55px;width:auto;object-fit:contain">`;
   const vociHtml=(p.voci||[]).map(v=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f0f0f0;font-size:10px"><span>${v.cat} — ${v.desc} (${v.qty} ${v.um})</span><strong>${fmt(v.prezzo*v.qty)}</strong></div>`).join('');
-  $('pdfContent').innerHTML=`
-    <div class="pdf-preview">
-      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1a3c6e;padding-bottom:12px;margin-bottom:14px;page-break-inside:avoid">
-        <div>
-          <div style="font-weight:800;font-size:13px;letter-spacing:.5px;color:#1a3c6e;white-space:nowrap">SHIBA COSTRUZIONI s.a.s</div>
-          <div style="color:#2563eb;font-size:10px;font-weight:700;letter-spacing:.8px;margin-top:2px">${AZIENDA.tagline}</div>
-          <div style="color:#555;font-size:9px;margin-top:4px">${AZIENDA.indirizzo}</div>
-          <div style="color:#555;font-size:9px;margin-top:2px">${AZIENDA.email} · ${AZIENDA.tel}</div>
-          <div style="color:#555;font-size:9px;margin-top:2px">${AZIENDA.piva}</div>
-        </div>${logoHtml}
-      </div>
-      <div style="margin-bottom:10px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#2563eb;border-bottom:1px solid #eee;padding-bottom:3px;margin-bottom:6px">Cliente</div>
-        <div style="font-weight:700">${p.cliente}</div>
-        ${p.indirizzo?`<div style="color:#666;font-size:9px">Indirizzo: ${p.indirizzo}</div>`:''}
-      </div>
-      <div style="margin-bottom:10px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#2563eb;border-bottom:1px solid #eee;padding-bottom:3px;margin-bottom:6px">Oggetto</div>
-        <div style="font-weight:700">${p.descrizione}</div>
-        <div style="color:#666;font-size:9px">Data: ${fmtD(p.data)}${p.durata?' · Durata stimata: '+p.durata+' giorni':''}</div>
-      </div>
-      <div style="margin-bottom:10px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#2563eb;border-bottom:1px solid #eee;padding-bottom:3px;margin-bottom:6px">Voci di lavoro</div>
-        ${vociHtml||'<div style="color:#999">Nessuna voce</div>'}
-      </div>
-      <div style="margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;color:#666;font-size:10px;padding:2px 0"><span>Imponibile</span><span>${fmt(t.imponibile)}</span></div>
-        <div style="display:flex;justify-content:space-between;color:#666;font-size:10px;padding:2px 0"><span>IVA ${p.iva||22}%</span><span>${fmt(t.iva)}</span></div>
-        <div style="display:flex;justify-content:space-between;font-weight:800;font-size:12px;color:#1a3c6e;padding-top:6px;border-top:2px solid #111;margin-top:3px"><span>TOTALE</span><span>${fmt(t.totIva)}</span></div>
-      </div>
-      
-      <div style="margin-top:16px;font-size:9px;text-align:center;color:#555;font-weight:600">Preventivo valido 30 giorni</div>
-    </div>`;
-  openModal('ovPdf');
-}
-
-function stampaPdf(){
-  var w=window.open('','_blank');
-  if(!w){toast('Consenti i popup nel browser');return;}
-  var p=state.preventivi.find(x=>x.id===state.prevCorrente);
-  var titolo=p?(p.cliente||'Cliente').replace(/\s+/g,'_')+'_preventivo_'+(p.descrizione||'').replace(/\s+/g,'_').slice(0,30):'preventivo';
-  var content=document.getElementById('pdfContent').innerHTML;
+  const content=`<div style="background:#fff;color:#111;border-radius:8px;padding:20px;font-family:Arial,sans-serif;font-size:11px;line-height:1.6">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1a3c6e;padding-bottom:12px;margin-bottom:14px">
+      <div>
+        <div style="font-weight:800;font-size:13px;letter-spacing:.5px;color:#1a3c6e;white-space:nowrap">SHIBA COSTRUZIONI s.a.s</div>
+        <div style="color:#2563eb;font-size:10px;font-weight:700;letter-spacing:.8px;margin-top:2px">${AZIENDA.tagline}</div>
+        <div style="color:#555;font-size:9px;margin-top:4px">${AZIENDA.indirizzo}</div>
+        <div style="color:#555;font-size:9px;margin-top:2px">${AZIENDA.email} · ${AZIENDA.tel}</div>
+        <div style="color:#555;font-size:9px;margin-top:2px">${AZIENDA.piva}</div>
+      </div>${logoHtml}
+    </div>
+    <div style="margin-bottom:10px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#2563eb;border-bottom:1px solid #eee;padding-bottom:3px;margin-bottom:6px">Cliente</div>
+      <div style="font-weight:700">${p.cliente}</div>
+      ${p.indirizzo?`<div style="color:#666;font-size:9px">Indirizzo: ${p.indirizzo}</div>`:''}
+    </div>
+    <div style="margin-bottom:10px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#2563eb;border-bottom:1px solid #eee;padding-bottom:3px;margin-bottom:6px">Oggetto</div>
+      <div style="font-weight:700">${p.descrizione}</div>
+      <div style="color:#666;font-size:9px">Data: ${fmtD(p.data)}${p.durata?' · Durata stimata: '+p.durata+' giorni':''}</div>
+    </div>
+    <div style="margin-bottom:10px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#2563eb;border-bottom:1px solid #eee;padding-bottom:3px;margin-bottom:6px">Voci di lavoro</div>
+      ${vociHtml||'<div style="color:#999">Nessuna voce</div>'}
+    </div>
+    <div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;color:#666;font-size:10px;padding:2px 0"><span>Imponibile</span><span>${fmt(t.imponibileNetto)}</span></div>
+      ${t.scontoEuro>0?`<div style="display:flex;justify-content:space-between;color:#27ae60;font-size:10px;font-weight:700;padding:2px 0"><span>Sconto ${p.sconto}%</span><span>- ${fmt(t.scontoEuro)}</span></div>`:''}
+      ${t.scontoEuro>0?`<div style="display:flex;justify-content:space-between;color:#666;font-size:10px;padding:2px 0"><span>Imponibile netto</span><span>${fmt(t.imponibile)}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between;color:#666;font-size:10px;padding:2px 0"><span>IVA ${p.iva||22}%</span><span>${fmt(t.iva)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:800;font-size:12px;color:#1a3c6e;padding-top:6px;border-top:2px solid #111;margin-top:3px"><span>TOTALE</span><span>${fmt(t.totIva)}</span></div>
+    </div>
+    <div style="margin-top:16px;font-size:9px;text-align:center;color:#555;font-weight:600">Preventivo valido 30 giorni</div>
+  </div>`;
+  var titolo=(p.cliente||'Cliente').replace(/\s+/g,'_')+'_preventivo_'+(p.descrizione||'').replace(/\s+/g,'_').slice(0,30);
   var css='<style>*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Arial,sans-serif;font-size:14px;color:#111;line-height:1.5}#close-btn{position:fixed;top:12px;right:12px;background:#1a3c6e;color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:1.2rem;cursor:pointer;z-index:999;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3)}@media print{#close-btn{display:none!important}}</style>';
   var html='<!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>'+titolo+'</title>'+css+'</head><body><button id="close-btn" onclick="window.close()">×</button>'+content+'<script>window.onload=function(){window.print();}<\/script></body></html>';
   w.document.open();
   w.document.write(html);
   w.document.close();
 }
+
+function mostraPdf(){stampaPdf();}
 
 
 

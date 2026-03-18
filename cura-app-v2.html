@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cura – App Completa</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F1EB;
+  --surface: #FFFFFF;
+  --primary: #1B4332;
+  --primary-mid: #2D6A4F;
+  --primary-light: #40916C;
+  --primary-pale: #D8F3DC;
+  --accent: #E9C46A;
+  --accent-dark: #F4A261;
+  --danger: #E76F51;
+  --text: #111827;
+  --text-muted: #6B7280;
+  --border: #E5DDD4;
+  --card-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  --font-d: 'Plus Jakarta Sans', sans-serif;
+  --font-b: 'Plus Jakarta Sans', sans-serif;
+  --r-card: 22px;
+  --r-pill: 100px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: #2D6A4F;
+  font-family: var(--font-b);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 0;
+}
+
+/* Phone shell */
+.phone {
+  width: 390px;
+  background: var(--bg);
+  border-radius: 48px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 8px #1a1a1a, inset 0 0 0 2px #333;
+  position: relative;
+  min-height: 844px;
+}
+
+.notch {
+  width: 120px; height: 32px;
+  background: #1a1a1a;
+  border-radius: 0 0 20px 20px;
+  margin: 0 auto;
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  z-index: 200;
+}
+
+@media (max-width: 430px) {
+  body { padding: 0; background: var(--bg); }
+  .phone { width: 100vw; border-radius: 0; box-shadow: none; min-height: 100vh; }
+  .notch { display: none; }
+}
+
+/* ─── MODE TOGGLE ─── */
+.mode-toggle-bar {
+  position: absolute;
+  bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 100px;
+  padding: 4px;
+  display: flex;
+  gap: 2px;
+  z-index: 999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.mode-btn {
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-family: var(--font-d);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  transition: all 0.25s;
+  letter-spacing: 0.3px;
+}
+.mode-btn.active {
+  background: #fff;
+  color: var(--primary);
+}
+
+/* ─── SCREENS ─── */
+.screen { display: none; flex-direction: column; min-height: 844px; animation: fadeUp 0.3s ease both; }
+.screen.active { display: flex; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ─── SCROLL ─── */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 140px;
+  scrollbar-width: none;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ─── TOPBAR ─── */
+.topbar {
+  padding: 52px 24px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-logo { font-family: var(--font-d); font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
+.topbar-avatar {
+  width: 42px; height: 42px;
+  background: var(--primary-pale);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer;
+}
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 16px 24px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-d);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer; border: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  letter-spacing: -0.2px;
+  width: 100%;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 20px rgba(27,67,50,0.3); }
+.btn-accent  { background: var(--accent-dark); color: #fff; box-shadow: 0 4px 20px rgba(244,162,97,0.35); }
+.btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+.btn-green   { background: var(--primary-light); color: #fff; }
+
+/* ─── HOME CLIENT ─── */
+.hero-strip {
+  margin: 0 20px 20px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border-radius: var(--r-card);
+  padding: 22px;
+  color: #fff;
+  position: relative; overflow: hidden;
+}
+.hero-strip::before {
+  content: '🏡';
+  position: absolute; right: 20px; bottom: -8px;
+  font-size: 72px; opacity: 0.18;
+}
+.hero-greeting { font-size: 13px; opacity: 0.75; margin-bottom: 4px; }
+.hero-title { font-family: var(--font-d); font-size: 22px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 12px; }
+.hero-search {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer;
+}
+.hero-search span { color: rgba(255,255,255,0.7); font-size: 13px; }
+
+/* service chips */
+.chips-row {
+  display: flex; gap: 8px; padding: 0 20px; overflow-x: auto; scrollbar-width: none; margin-bottom: 24px;
+}
+.chips-row::-webkit-scrollbar { display: none; }
+.chip {
+  flex: 0 0 auto;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 100px; padding: 8px 16px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip.sel { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+/* section title */
+.sec { padding: 0 20px; margin-bottom: 12px; }
+.sec-title { font-family: var(--font-d); font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+.sec-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* worker card */
+.wcard {
+  margin: 0 20px 12px;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  padding: 16px;
+  box-shadow: var(--card-shadow);
+  display: flex; gap: 12px; cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s;
+}
+.wcard:hover { border-color: var(--primary-pale); transform: translateY(-2px); }
+.wcard-ava {
+  width: 64px; height: 64px;
+  background: var(--primary-pale);
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; flex-shrink: 0; position: relative;
+}
+.online-dot {
+  width: 11px; height: 11px;
+  background: #22C55E; border: 2.5px solid #fff;
+  border-radius: 50%;
+  position: absolute; bottom: -1px; right: -1px;
+}
+.wcard-body { flex: 1; }
+.wcard-name { font-family: var(--font-d); font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.wcard-role { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+.tag-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.tag { background: #F0FDF4; color: var(--primary-mid); font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 100px; }
+.wcard-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.wcard-stars { font-size: 12px; font-weight: 700; }
+.wcard-km { font-size: 11px; color: var(--text-muted); }
+.wcard-price { font-family: var(--font-d); font-size: 16px; font-weight: 800; color: var(--primary); }
+
+/* ─── BOTTOM NAV ─── */
+.bnav {
+  position: fixed; bottom: 52px; left: 50%; transform: translateX(-50%);
+  width: 370px;
+  background: var(--surface);
+  border-radius: 24px;
+  padding: 10px 8px;
+  display: flex;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  z-index: 100;
+  border: 1px solid var(--border);
+}
+@media (max-width: 430px) {
+  .bnav { width: calc(100% - 32px); bottom: 48px; }
+}
+.bnav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; padding: 6px 0;
+  border-radius: 16px; transition: background 0.15s;
+}
+.bnav-item:hover { background: var(--bg); }
+.bnav-item.act { background: var(--primary-pale); }
+.bnav-icon { font-size: 20px; }
+.bnav-lbl { font-size: 9px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.3px; text-transform: uppercase; }
+.bnav-item.act .bnav-lbl { color: var(--primary); }
+
+/* ─── BOOKING ─── */
+.bk-header {
+  padding: 52px 20px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.back-btn {
+  width: 36px; height: 36px;
+  background: var(--bg); border-radius: 12px;
+  border: none; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.bk-worker { display: flex; gap: 14px; align-items: center; }
+.bk-ava { width: 72px; height: 72px; background: var(--primary-pale); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 34px; flex-shrink: 0; }
+.bk-name { font-family: var(--font-d); font-size: 20px; font-weight: 800; letter-spacing: -0.4px; }
+.bk-role { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+
+.bk-body { padding: 20px; }
+.opt-group { margin-bottom: 22px; }
+.opt-lbl { font-family: var(--font-d); font-size: 14px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+
+.pill-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill {
+  padding: 9px 16px; border-radius: 100px;
+  border: 1.5px solid var(--border);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  background: var(--surface); color: var(--text);
+  transition: all 0.15s;
+}
+.pill:hover { border-color: var(--primary); color: var(--primary); }
+.pill.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.date-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.ditem {
+  aspect-ratio: 1; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+}
+.ditem:hover { border-color: var(--primary); }
+.ditem.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.dday { font-size: 9px; font-weight: 700; opacity: 0.6; text-transform: uppercase; }
+.dnum { font-family: var(--font-d); font-size: 22px; font-weight: 800; }
+.davail { font-size: 9px; }
+
+.time-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.titem {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 10px; text-align: center;
+  cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s;
+}
+.titem:hover { border-color: var(--primary); }
+.titem.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.titem.na { opacity: 0.3; cursor: default; }
+
+/* ─── PAYMENT ─── */
+.pay-section { margin-bottom: 22px; }
+.pay-title { font-family: var(--font-d); font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.card-options { display: flex; flex-direction: column; gap: 8px; }
+.pay-option {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: all 0.15s;
+}
+.pay-option.sel { border-color: var(--primary); background: #F0FDF4; }
+.pay-icon { font-size: 22px; }
+.pay-label { font-size: 14px; font-weight: 600; }
+.pay-sub { font-size: 11px; color: var(--text-muted); }
+.pay-radio {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border); margin-left: auto;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pay-option.sel .pay-radio { border-color: var(--primary); background: var(--primary); }
+.pay-option.sel .pay-radio::after { content: ''; width: 8px; height: 8px; background: #fff; border-radius: 50%; }
+
+.card-input-group { margin-top: 10px; }
+.card-row { display: flex; gap: 8px; }
+.inp {
+  width: 100%; padding: 13px 14px;
+  border: 1.5px solid var(--border); border-radius: 14px;
+  font-family: var(--font-b); font-size: 14px;
+  background: var(--bg); color: var(--text); outline: none;
+  transition: border-color 0.2s;
+}
+.inp:focus { border-color: var(--primary); background: #fff; }
+
+.price-box {
+  background: var(--primary-pale); border-radius: 18px; padding: 16px;
+  margin-bottom: 20px;
+}
+.pr { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 14px; }
+.pr.tot { border-top: 1px solid rgba(27,67,50,0.15); margin-top: 10px; padding-top: 12px; }
+.pr-lbl-big { font-family: var(--font-d); font-size: 15px; font-weight: 700; }
+.pr-val-big { font-family: var(--font-d); font-size: 22px; font-weight: 800; color: var(--primary); }
+
+/* ─── CONFIRM ─── */
+#screen-confirm {
+  align-items: center; justify-content: flex-start;
+  padding: 52px 0 0;
+}
+.confirm-map {
+  width: 100%; height: 200px;
+  background: #E0EDE4;
+  position: relative; overflow: hidden;
+  flex-shrink: 0;
+}
+.confirm-map::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(27,67,50,0.05) 0,rgba(27,67,50,0.05) 1px, transparent 1px, transparent 30px),
+    repeating-linear-gradient(90deg, rgba(27,67,50,0.05) 0,rgba(27,67,50,0.05) 1px, transparent 1px, transparent 30px);
+}
+.cmap-dot { width:50px;height:50px; background:var(--primary); border-radius:50%; border:3px solid #fff; position:absolute; top:35%; left:30%; display:flex;align-items:center;justify-content:center;font-size:24px; box-shadow:0 4px 16px rgba(27,67,50,0.4); animation:mv 5s ease-in-out infinite; }
+@keyframes mv { 0%,100%{transform:translate(0,0)} 33%{transform:translate(20px,-10px)} 66%{transform:translate(40px,6px)} }
+.cmap-pin { width:38px;height:38px; background:var(--danger); border-radius:50% 50% 50% 0; transform:rotate(-45deg); position:absolute; bottom:30px;right:70px; box-shadow:0 4px 12px rgba(231,111,81,.4); }
+.cmap-pin::after { content:'🏠';transform:rotate(45deg);font-size:16px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg); }
+
+.confirm-sheet {
+  background: var(--surface); border-radius: 28px 28px 0 0;
+  margin-top: -28px; padding: 28px 24px 120px;
+  flex: 1; width: 100%;
+}
+.confirm-sheet-handle { width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px; }
+.conf-check { width:56px;height:56px;background:#D1FAE5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:14px;animation:pop .5s cubic-bezier(.175,.885,.32,1.275) both; }
+@keyframes pop { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+.conf-title { font-family:var(--font-d);font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px; }
+.conf-sub { font-size:14px;color:var(--text-muted);font-weight:400;line-height:1.6;margin-bottom:20px; }
+
+.info-card { background:var(--bg);border-radius:16px;padding:16px;margin-bottom:16px; }
+.ic-row { display:flex;align-items:center;gap:10px;padding:5px 0; }
+.ic-ico { font-size:18px;width:28px;text-align:center; }
+.ic-lbl { font-size:12px;color:var(--text-muted); }
+.ic-val { font-family:var(--font-d);font-size:14px;font-weight:700; }
+
+/* ─── REVIEWS ─── */
+.rev-screen .scroll-area { padding: 0 0 140px; }
+.rev-summary {
+  margin: 0 20px 20px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: var(--r-card); padding: 24px; color: #fff;
+  display: flex; gap: 20px; align-items: center;
+}
+.rev-big { font-family: var(--font-d); font-size: 56px; font-weight: 800; line-height: 1; }
+.rev-stars-big { font-size: 22px; margin-bottom: 4px; }
+.rev-count { font-size: 13px; opacity: 0.75; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.bar-lbl { font-size: 11px; width: 8px; opacity: 0.8; }
+.bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; }
+.bar-fill { height: 100%; background: #fff; border-radius: 3px; }
+
+.rev-card {
+  margin: 0 20px 12px;
+  background: var(--surface); border-radius: var(--r-card);
+  padding: 16px; box-shadow: var(--card-shadow);
+}
+.rc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.rc-ava { width: 42px; height: 42px; border-radius: 14px; background: var(--primary-pale); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.rc-name { font-family: var(--font-d); font-size: 14px; font-weight: 700; }
+.rc-date { font-size: 11px; color: var(--text-muted); }
+.rc-stars { margin-left: auto; font-size: 13px; }
+.rc-text { font-size: 13px; line-height: 1.6; color: #374151; }
+.rc-ai-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--primary-pale); color: var(--primary);
+  font-size: 10px; font-weight: 700; padding: 3px 8px;
+  border-radius: 100px; margin-top: 8px;
+}
+
+.ai-review-box {
+  margin: 0 20px 20px;
+  background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+  border: 1.5px solid #86EFAC;
+  border-radius: var(--r-card); padding: 16px;
+}
+.airb-title { font-family: var(--font-d); font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+.airb-desc { font-size: 13px; color: #374151; margin-bottom: 12px; line-height: 1.5; }
+.star-selector { display: flex; gap: 4px; margin-bottom: 12px; }
+.star-btn { font-size: 26px; cursor: pointer; transition: transform 0.1s; }
+.star-btn:hover { transform: scale(1.2); }
+.star-btn.lit { filter: none; }
+.star-btn:not(.lit) { filter: grayscale(1) opacity(0.4); }
+textarea.inp { resize: none; font-family: var(--font-b); }
+.ai-assist-btn {
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 12px; padding: 10px 16px;
+  font-family: var(--font-d); font-size: 13px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  margin-bottom: 10px; width: 100%; justify-content: center;
+  transition: opacity 0.2s;
+}
+.ai-assist-btn:hover { opacity: 0.85; }
+.ai-output {
+  background: #fff; border-radius: 12px; padding: 12px;
+  font-size: 13px; line-height: 1.6; color: #374151;
+  border: 1px solid #D1FAE5; min-height: 60px;
+  display: none;
+}
+.ai-output.show { display: block; }
+.typing-cursor::after { content: '▋'; animation: blink 0.8s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ─── WORKER SIDE ─── */
+.worker-screen { background: #0F2D1F; }
+.worker-screen .topbar { background: #0F2D1F; }
+.worker-screen .topbar-logo { color: #4ADE80; }
+.worker-screen .topbar-avatar { background: #1B4332; }
+
+.status-toggle-card {
+  margin: 0 20px 20px;
+  background: #1B4332; border-radius: var(--r-card); padding: 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.st-info { }
+.st-status { font-family: var(--font-d); font-size: 18px; font-weight: 800; color: #4ADE80; margin-bottom: 2px; }
+.st-sub { font-size: 12px; color: rgba(255,255,255,0.5); }
+.toggle-switch {
+  width: 56px; height: 30px;
+  background: #4ADE80; border-radius: 100px;
+  position: relative; cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle-switch.off { background: #374151; }
+.toggle-knob {
+  width: 24px; height: 24px;
+  background: #fff; border-radius: 50%;
+  position: absolute; top: 3px; left: 29px;
+  transition: left 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.toggle-switch.off .toggle-knob { left: 3px; }
+
+.earnings-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin: 0 20px 20px;
+}
+.earn-card {
+  background: #1B4332; border-radius: 18px; padding: 16px;
+}
+.earn-lbl { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.earn-val { font-family: var(--font-d); font-size: 24px; font-weight: 800; color: #fff; }
+.earn-sub { font-size: 11px; color: #4ADE80; margin-top: 2px; }
+
+.req-card {
+  margin: 0 20px 12px;
+  background: #1B4332; border-radius: var(--r-card); padding: 16px;
+  border: 1px solid #2D6A4F;
+}
+.req-top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.req-ava { width: 50px; height: 50px; background: #2D6A4F; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.req-name { font-family: var(--font-d); font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+.req-detail { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+.req-price { margin-left: auto; font-family: var(--font-d); font-size: 20px; font-weight: 800; color: #4ADE80; }
+.req-actions { display: flex; gap: 8px; }
+.req-btn {
+  flex: 1; padding: 12px; border-radius: 14px; border: none;
+  font-family: var(--font-d); font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.req-btn:active { opacity: 0.8; }
+.req-btn.accept { background: #4ADE80; color: #0F2D1F; }
+.req-btn.decline { background: #374151; color: rgba(255,255,255,0.6); }
+
+.schedule-item {
+  margin: 0 20px 8px;
+  background: #1B4332; border-radius: 16px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  border-left: 3px solid #4ADE80;
+}
+.si-time { font-family: var(--font-d); font-size: 13px; font-weight: 700; color: #4ADE80; width: 48px; flex-shrink: 0; }
+.si-name { font-family: var(--font-d); font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 1px; }
+.si-detail { font-size: 11px; color: rgba(255,255,255,0.5); }
+.si-badge { margin-left: auto; background: #2D6A4F; color: #4ADE80; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+
+/* worker bnav */
+.bnav-worker { background: #1B4332; border-color: #2D6A4F; }
+.bnav-worker .bnav-item.act { background: #2D6A4F; }
+.bnav-worker .bnav-item.act .bnav-lbl { color: #4ADE80; }
+
+/* ─── AI CHAT ─── */
+.chat-container {
+  display: flex; flex-direction: column; height: 100%;
+  min-height: 844px; background: var(--bg);
+}
+.chat-header {
+  padding: 52px 20px 16px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.chat-bot-ava {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.chat-bot-name { font-family: var(--font-d); font-size: 16px; font-weight: 700; }
+.chat-bot-status { font-size: 12px; color: var(--text-muted); }
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  padding-bottom: 140px; scrollbar-width: none;
+}
+.chat-messages::-webkit-scrollbar { display: none; }
+.msg { max-width: 80%; }
+.msg.bot { align-self: flex-start; }
+.msg.user { align-self: flex-end; }
+.msg-bubble {
+  padding: 12px 14px; border-radius: 18px;
+  font-size: 14px; line-height: 1.55;
+}
+.msg.bot .msg-bubble {
+  background: var(--surface); border-radius: 4px 18px 18px 18px;
+  box-shadow: var(--card-shadow); color: var(--text);
+}
+.msg.user .msg-bubble {
+  background: var(--primary); color: #fff;
+  border-radius: 18px 18px 4px 18px;
+}
+.msg-time { font-size: 10px; color: var(--text-muted); margin-top: 4px; padding: 0 4px; }
+.msg.user .msg-time { text-align: right; }
+
+.quick-replies { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.qr { background: var(--primary-pale); color: var(--primary); border: 1px solid #86EFAC; border-radius: 100px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.qr:hover { background: var(--primary); color: #fff; }
+
+.chat-input-bar {
+  position: fixed; bottom: 52px; left: 50%; transform: translateX(-50%);
+  width: 390px; background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 16px 16px;
+  display: flex; gap: 8px; align-items: flex-end;
+  z-index: 50;
+}
+@media (max-width: 430px) { .chat-input-bar { width: 100%; left: 0; transform: none; } }
+.chat-inp {
+  flex: 1; padding: 11px 14px;
+  border: 1.5px solid var(--border); border-radius: 20px;
+  font-family: var(--font-b); font-size: 14px;
+  background: var(--bg); outline: none; resize: none;
+  transition: border-color 0.2s; max-height: 100px;
+}
+.chat-inp:focus { border-color: var(--primary); background: #fff; }
+.chat-send {
+  width: 42px; height: 42px;
+  background: var(--primary); border: none; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer;
+  transition: opacity 0.15s; flex-shrink: 0;
+}
+.chat-send:hover { opacity: 0.85; }
+
+/* loader dots */
+.typing { display: flex; gap: 4px; padding: 4px 0; }
+.typing span { width: 7px; height: 7px; background: var(--text-muted); border-radius: 50%; animation: td 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes td { 0%,80%,100%{transform:scale(0.8);opacity:0.4} 40%{transform:scale(1.2);opacity:1} }
+
+/* ─── MISC ─── */
+.sec-label { padding: 0 20px; font-family: var(--font-d); font-size: 17px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 12px; }
+.green-text { color: #4ADE80; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- MODE TOGGLE -->
+  <div class="mode-toggle-bar">
+    <button class="mode-btn active" onclick="setMode('client')">👤 Cliente</button>
+    <button class="mode-btn" onclick="setMode('worker')">👩‍💼 Operatrice</button>
+  </div>
+
+  <!-- ═══════════════ CLIENT SCREENS ═══════════════ -->
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <div class="topbar">
+      <div class="topbar-logo">cura</div>
+      <div class="topbar-avatar">👤</div>
+    </div>
+    <div class="scroll-area">
+      <div class="hero-strip">
+        <div class="hero-greeting">Ciao, Idris 👋</div>
+        <div class="hero-title">Di cosa hai bisogno<br>oggi?</div>
+        <div class="hero-search">
+          <span>🔍</span>
+          <span>Cerca servizio o operatrice…</span>
+        </div>
+      </div>
+
+      <div class="chips-row">
+        <div class="chip sel" onclick="selChip(this)">🧹 Colf</div>
+        <div class="chip" onclick="selChip(this)">👵 Badante</div>
+        <div class="chip" onclick="selChip(this)">👶 Baby-sitter</div>
+        <div class="chip" onclick="selChip(this)">🍳 Cuoca</div>
+        <div class="chip" onclick="selChip(this)">🌿 Giardinaggio</div>
+      </div>
+
+      <div class="sec"><div class="sec-title">Disponibili subito</div><div class="sec-sub">3 operatrici a meno di 2 km</div></div>
+
+      <div class="wcard" onclick="goTo('screen-booking')">
+        <div class="wcard-ava">👩‍🦱<div class="online-dot"></div></div>
+        <div class="wcard-body">
+          <div class="wcard-name">Maria Esposito</div>
+          <div class="wcard-role">Colf · 6 anni · 127 servizi</div>
+          <div class="tag-row"><span class="tag">Pulizie profonde</span><span class="tag">Stiro</span></div>
+        </div>
+        <div class="wcard-right">
+          <div class="wcard-stars">⭐ 4.9</div>
+          <div class="wcard-km">0.8 km</div>
+          <div class="wcard-price">12€/h</div>
+        </div>
+      </div>
+
+      <div class="wcard" onclick="goTo('screen-booking')">
+        <div class="wcard-ava">👩<div class="online-dot"></div></div>
+        <div class="wcard-body">
+          <div class="wcard-name">Lucia Marino</div>
+          <div class="wcard-role">Badante · 12 anni · 84 servizi</div>
+          <div class="tag-row"><span class="tag">Alzheimer</span><span class="tag">Fisioterapia</span></div>
+        </div>
+        <div class="wcard-right">
+          <div class="wcard-stars">⭐ 5.0</div>
+          <div class="wcard-km">1.2 km</div>
+          <div class="wcard-price">14€/h</div>
+        </div>
+      </div>
+
+      <div class="wcard" onclick="goTo('screen-booking')">
+        <div class="wcard-ava">👩‍🦰<div class="online-dot"></div></div>
+        <div class="wcard-body">
+          <div class="wcard-name">Fatima El Amine</div>
+          <div class="wcard-role">Colf · 4 anni · 52 servizi</div>
+          <div class="tag-row"><span class="tag">Finestre</span><span class="tag">Cucina</span></div>
+        </div>
+        <div class="wcard-right">
+          <div class="wcard-stars">⭐ 4.8</div>
+          <div class="wcard-km">2.1 km</div>
+          <div class="wcard-price">11€/h</div>
+        </div>
+      </div>
+    </div>
+    <nav class="bnav">
+      <div class="bnav-item act"><span class="bnav-icon">🏠</span><span class="bnav-lbl">Home</span></div>
+      <div class="bnav-item" onclick="goTo('screen-confirm')"><span class="bnav-icon">📍</span><span class="bnav-lbl">Attivi</span></div>
+      <div class="bnav-item" onclick="goTo('screen-reviews')"><span class="bnav-icon">⭐</span><span class="bnav-lbl">Recensioni</span></div>
+      <div class="bnav-item" onclick="goTo('screen-chat')"><span class="bnav-icon">🤖</span><span class="bnav-lbl">AI Cura</span></div>
+    </nav>
+  </div>
+
+  <!-- BOOKING -->
+  <div id="screen-booking" class="screen">
+    <div class="bk-header">
+      <button class="back-btn" onclick="goTo('screen-home')">←</button>
+      <div class="bk-worker">
+        <div class="bk-ava">👩‍🦱</div>
+        <div>
+          <div class="bk-name">Maria Esposito</div>
+          <div class="bk-role">Colf · 6 anni di esperienza</div>
+          <span style="font-size:13px;color:#F59E0B;">⭐⭐⭐⭐⭐</span>
+          <span style="font-size:12px;color:var(--text-muted);"> 4.9 (127)</span>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="bk-body">
+        <div class="opt-group">
+          <div class="opt-lbl">Tipo di pulizia</div>
+          <div class="pill-group">
+            <div class="pill on" onclick="singlePill(this)">Ordinaria</div>
+            <div class="pill" onclick="singlePill(this)">Profonda</div>
+            <div class="pill" onclick="singlePill(this)">Post-trasloco</div>
+            <div class="pill" onclick="singlePill(this)">Solo stiro</div>
+          </div>
+        </div>
+        <div class="opt-group">
+          <div class="opt-lbl">Durata</div>
+          <div class="pill-group">
+            <div class="pill" onclick="singlePill(this)">2 ore</div>
+            <div class="pill on" onclick="singlePill(this)">3 ore</div>
+            <div class="pill" onclick="singlePill(this)">4 ore</div>
+            <div class="pill" onclick="singlePill(this)">Mezza giornata</div>
+          </div>
+        </div>
+        <div class="opt-group">
+          <div class="opt-lbl">Giorno</div>
+          <div class="date-grid">
+            <div class="ditem" onclick="selDate(this)"><span class="dday">LUN</span><span class="dnum">20</span><span class="davail" style="color:var(--primary-light)">✓</span></div>
+            <div class="ditem on" onclick="selDate(this)"><span class="dday">MAR</span><span class="dnum">21</span><span class="davail">✓</span></div>
+            <div class="ditem" onclick="selDate(this)"><span class="dday">MER</span><span class="dnum">22</span><span class="davail" style="color:var(--primary-light)">✓</span></div>
+            <div class="ditem" onclick="selDate(this)"><span class="dday">GIO</span><span class="dnum">23</span><span class="davail" style="color:#F59E0B">–</span></div>
+          </div>
+        </div>
+        <div class="opt-group">
+          <div class="opt-lbl">Orario</div>
+          <div class="time-grid">
+            <div class="titem" onclick="selTime(this)">08:00</div>
+            <div class="titem on" onclick="selTime(this)">09:00</div>
+            <div class="titem" onclick="selTime(this)">10:00</div>
+            <div class="titem" onclick="selTime(this)">11:00</div>
+            <div class="titem na">14:00</div>
+            <div class="titem" onclick="selTime(this)">15:00</div>
+          </div>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="pay-section">
+          <div class="pay-title">💳 Metodo di pagamento</div>
+          <div class="card-options">
+            <div class="pay-option sel" onclick="selPay(this)">
+              <span class="pay-icon">💳</span>
+              <div><div class="pay-label">Carta di credito</div><div class="pay-sub">Visa, Mastercard, Amex</div></div>
+              <div class="pay-radio"></div>
+            </div>
+            <div class="pay-option" onclick="selPay(this)">
+              <span class="pay-icon">📱</span>
+              <div><div class="pay-label">Apple Pay / Google Pay</div><div class="pay-sub">Pagamento rapido</div></div>
+              <div class="pay-radio"></div>
+            </div>
+            <div class="pay-option" onclick="selPay(this)">
+              <span class="pay-icon">💵</span>
+              <div><div class="pay-label">Contanti</div><div class="pay-sub">Pagamento alla consegna</div></div>
+              <div class="pay-radio"></div>
+            </div>
+          </div>
+          <div class="card-input-group" id="card-inputs">
+            <input class="inp" type="text" placeholder="Numero carta" style="margin-bottom:8px">
+            <div class="card-row">
+              <input class="inp" type="text" placeholder="MM/AA">
+              <input class="inp" type="text" placeholder="CVV">
+            </div>
+          </div>
+        </div>
+
+        <div class="price-box">
+          <div class="pr"><span>3 ore × 12€/h</span><span>36,00€</span></div>
+          <div class="pr"><span>Commissione servizio (10%)</span><span>3,60€</span></div>
+          <div class="pr"><span style="color:var(--primary-light)">✨ Prima prenotazione</span><span style="color:var(--primary-light)">−3,60€</span></div>
+          <div class="pr tot">
+            <span class="pr-lbl-big">Totale</span>
+            <span class="pr-val-big">36,00€</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="goTo('screen-confirm')">🔒 Paga e prenota</button>
+        <div style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:10px;">Pagamento sicuro SSL · Cancellazione gratuita entro 2h</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM / TRACKING -->
+  <div id="screen-confirm" class="screen">
+    <div class="confirm-map">
+      <div class="cmap-dot">👩‍🦱</div>
+      <div class="cmap-pin"></div>
+    </div>
+    <div class="confirm-sheet">
+      <div class="confirm-sheet-handle"></div>
+      <div class="conf-check">✅</div>
+      <div class="conf-title">Prenotata!</div>
+      <div class="conf-sub">Maria arriverà domani mattina. Riceverai una notifica 20 minuti prima.</div>
+      <div class="info-card">
+        <div class="ic-row"><span class="ic-ico">👩‍🦱</span><div><div class="ic-lbl">Operatrice</div><div class="ic-val">Maria Esposito</div></div></div>
+        <div class="ic-row"><span class="ic-ico">📅</span><div><div class="ic-lbl">Data e ora</div><div class="ic-val">Martedì 21 · 09:00</div></div></div>
+        <div class="ic-row"><span class="ic-ico">⏱️</span><div><div class="ic-lbl">Durata</div><div class="ic-val">3 ore</div></div></div>
+        <div class="ic-row"><span class="ic-ico">💳</span><div><div class="ic-lbl">Pagato</div><div class="ic-val">36,00€ · Carta •••• 4242</div></div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="btn btn-outline" style="flex:1;font-size:13px" onclick="goTo('screen-reviews')">⭐ Lascia recensione</button>
+        <button class="btn btn-primary" style="flex:1;font-size:13px" onclick="goTo('screen-chat')">🤖 Assistente AI</button>
+      </div>
+      <button class="btn btn-outline" onclick="goTo('screen-home')">← Torna alla home</button>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div id="screen-reviews" class="screen rev-screen">
+    <div class="topbar">
+      <div class="topbar-logo">cura</div>
+      <div style="font-size:13px;color:var(--text-muted);font-weight:600;">Recensioni</div>
+    </div>
+    <div class="scroll-area">
+      <div class="rev-summary">
+        <div>
+          <div class="rev-big">4.9</div>
+          <div class="rev-stars-big">⭐⭐⭐⭐⭐</div>
+          <div class="rev-count">127 recensioni verificate</div>
+        </div>
+        <div style="flex:1">
+          <div class="bar-row"><span class="bar-lbl">5</span><div class="bar-bg"><div class="bar-fill" style="width:88%"></div></div><span style="font-size:10px;opacity:.7">88%</span></div>
+          <div class="bar-row"><span class="bar-lbl">4</span><div class="bar-bg"><div class="bar-fill" style="width:9%"></div></div><span style="font-size:10px;opacity:.7">9%</span></div>
+          <div class="bar-row"><span class="bar-lbl">3</span><div class="bar-bg"><div class="bar-fill" style="width:2%"></div></div><span style="font-size:10px;opacity:.7">2%</span></div>
+          <div class="bar-row"><span class="bar-lbl">2</span><div class="bar-bg"><div class="bar-fill" style="width:1%"></div></div><span style="font-size:10px;opacity:.7">1%</span></div>
+        </div>
+      </div>
+
+      <!-- AI Review Writer -->
+      <div class="ai-review-box">
+        <div class="airb-title">🤖 Scrivi con l'AI</div>
+        <div class="airb-desc">Racconta brevemente la tua esperienza e l'AI trasformerà le tue parole in una recensione dettagliata e utile.</div>
+        <div class="star-selector" id="star-sel">
+          <span class="star-btn lit" onclick="setStar(1)">⭐</span>
+          <span class="star-btn lit" onclick="setStar(2)">⭐</span>
+          <span class="star-btn lit" onclick="setStar(3)">⭐</span>
+          <span class="star-btn lit" onclick="setStar(4)">⭐</span>
+          <span class="star-btn lit" onclick="setStar(5)">⭐</span>
+        </div>
+        <textarea class="inp" id="rev-input" rows="3" placeholder="Es: Maria è arrivata puntuale, ha pulito tutto benissimo, molto professionale…" style="margin-bottom:10px;width:100%"></textarea>
+        <button class="ai-assist-btn" onclick="generateReview()">✨ Genera recensione con AI</button>
+        <div class="ai-output" id="ai-rev-output"></div>
+        <button class="btn btn-primary" id="pub-rev-btn" style="margin-top:10px;display:none" onclick="publishReview()">Pubblica recensione</button>
+      </div>
+
+      <div class="sec-label" style="margin-top:8px">Recensioni recenti</div>
+
+      <div class="rev-card">
+        <div class="rc-header">
+          <div class="rc-ava">👨</div>
+          <div><div class="rc-name">Marco B.</div><div class="rc-date">15 marzo 2026</div></div>
+          <div class="rc-stars">⭐⭐⭐⭐⭐</div>
+        </div>
+        <div class="rc-text">Maria è stata assolutamente fantastica! Casa pulita da cima a fondo, puntualissima, discreta. Consiglio vivamente a tutti.</div>
+        <div class="rc-ai-badge">🤖 Scritta con AI Cura</div>
+      </div>
+
+      <div class="rev-card">
+        <div class="rc-header">
+          <div class="rc-ava">👩</div>
+          <div><div class="rc-name">Giulia R.</div><div class="rc-date">10 marzo 2026</div></div>
+          <div class="rc-stars">⭐⭐⭐⭐⭐</div>
+        </div>
+        <div class="rc-text">Ho prenotato Maria per una pulizia profonda dopo un trasloco. Risultato impeccabile, ha rispettato ogni mio spazio. Tornerò di sicuro.</div>
+      </div>
+
+      <div class="rev-card">
+        <div class="rc-header">
+          <div class="rc-ava">👴</div>
+          <div><div class="rc-name">Antonio V.</div><div class="rc-date">2 marzo 2026</div></div>
+          <div class="rc-stars">⭐⭐⭐⭐⭐</div>
+        </div>
+        <div class="rc-text">Professionale, gentile e molto attenta. Mia madre è anziana e si è trovata benissimo con Maria. Servizio eccellente.</div>
+        <div class="rc-ai-badge">🤖 Scritta con AI Cura</div>
+      </div>
+    </div>
+    <nav class="bnav">
+      <div class="bnav-item" onclick="goTo('screen-home')"><span class="bnav-icon">🏠</span><span class="bnav-lbl">Home</span></div>
+      <div class="bnav-item" onclick="goTo('screen-confirm')"><span class="bnav-icon">📍</span><span class="bnav-lbl">Attivi</span></div>
+      <div class="bnav-item act"><span class="bnav-icon">⭐</span><span class="bnav-lbl">Recensioni</span></div>
+      <div class="bnav-item" onclick="goTo('screen-chat')"><span class="bnav-icon">🤖</span><span class="bnav-lbl">AI Cura</span></div>
+    </nav>
+  </div>
+
+  <!-- AI CHAT -->
+  <div id="screen-chat" class="screen">
+    <div class="chat-header">
+      <button class="back-btn" onclick="goTo('screen-home')" style="background:var(--bg)">←</button>
+      <div class="chat-bot-ava">🏠</div>
+      <div><div class="chat-bot-name">Cura AI</div><div class="chat-bot-status">Assistente personale · Online</div></div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg bot">
+        <div class="msg-bubble">Ciao! 👋 Sono Cura AI, il tuo assistente personale. Posso aiutarti a trovare la colf o badante giusta, rispondere a domande sui servizi, o aiutarti a prenotare. Cosa posso fare per te?</div>
+        <div class="msg-time">ora</div>
+        <div class="quick-replies">
+          <div class="qr" onclick="sendQR('Cerco una colf per domani mattina')">🧹 Cerco una colf</div>
+          <div class="qr" onclick="sendQR('Quali badanti sono disponibili questa settimana?')">👵 Cerco una badante</div>
+          <div class="qr" onclick="sendQR('Quanto costa il servizio?')">💰 Prezzi</div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-bar">
+      <textarea class="chat-inp" id="chat-inp" placeholder="Scrivi un messaggio…" rows="1" onkeydown="handleKey(event)"></textarea>
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ WORKER SCREENS ═══════════════ -->
+
+  <!-- WORKER HOME -->
+  <div id="screen-worker-home" class="screen worker-screen" style="display:none">
+    <div class="topbar" style="background:#0F2D1F;">
+      <div class="topbar-logo" style="color:#4ADE80;">cura</div>
+      <div class="topbar-avatar" style="background:#1B4332;">👩‍🦱</div>
+    </div>
+    <div class="scroll-area" style="background:#0F2D1F;">
+      <div class="status-toggle-card">
+        <div class="st-info">
+          <div class="st-status" id="worker-status-txt">🟢 Sei online</div>
+          <div class="st-sub">Ricevi nuove richieste</div>
+        </div>
+        <div class="toggle-switch" id="worker-toggle" onclick="toggleWorkerStatus()">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="earnings-row">
+        <div class="earn-card">
+          <div class="earn-lbl">Oggi</div>
+          <div class="earn-val">48€</div>
+          <div class="earn-sub">↑ 4 ore lavorate</div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-lbl">Questo mese</div>
+          <div class="earn-val">920€</div>
+          <div class="earn-sub">↑ 12% vs mese scorso</div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-lbl">Rating</div>
+          <div class="earn-val">4.9⭐</div>
+          <div class="earn-sub">127 recensioni</div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-lbl">Completati</div>
+          <div class="earn-val">127</div>
+          <div class="earn-sub">servizi totali</div>
+        </div>
+      </div>
+
+      <div class="sec-label" style="color:#fff;">🔔 Nuove richieste</div>
+
+      <div class="req-card">
+        <div class="req-top">
+          <div class="req-ava">👨</div>
+          <div>
+            <div class="req-name">Marco Bianchi</div>
+            <div class="req-detail">🧹 Pulizia ordinaria · 3 ore<br>📅 Domani, 09:00<br>📍 Via Roma 14, Pisa · 0.8 km</div>
+          </div>
+          <div class="req-price">36€</div>
+        </div>
+        <div class="req-actions">
+          <button class="req-btn accept" onclick="acceptReq(this)">✓ Accetta</button>
+          <button class="req-btn decline" onclick="declineReq(this)">✗ Rifiuta</button>
+        </div>
+      </div>
+
+      <div class="req-card">
+        <div class="req-top">
+          <div class="req-ava">👴</div>
+          <div>
+            <div class="req-name">Antonio Verdi</div>
+            <div class="req-detail">👵 Assistenza anziana · 4 ore<br>📅 Mercoledì, 10:00<br>📍 Corso Italia 55, Pisa · 1.3 km</div>
+          </div>
+          <div class="req-price">56€</div>
+        </div>
+        <div class="req-actions">
+          <button class="req-btn accept" onclick="acceptReq(this)">✓ Accetta</button>
+          <button class="req-btn decline" onclick="declineReq(this)">✗ Rifiuta</button>
+        </div>
+      </div>
+
+      <div class="sec-label" style="color:#fff;margin-top:8px;">📅 Agenda di oggi</div>
+
+      <div class="schedule-item">
+        <div class="si-time">09:00</div>
+        <div><div class="si-name">Giulia Rossi</div><div class="si-detail">Pulizia profonda · 4 ore</div></div>
+        <div class="si-badge">In corso</div>
+      </div>
+      <div class="schedule-item" style="border-left-color:#F59E0B;">
+        <div class="si-time">15:00</div>
+        <div><div class="si-name">Famiglia Conti</div><div class="si-detail">Stiro + riordino · 2 ore</div></div>
+        <div class="si-badge" style="background:#2D2A1B;color:#F59E0B;">Confermato</div>
+      </div>
+    </div>
+    <nav class="bnav bnav-worker">
+      <div class="bnav-item act"><span class="bnav-icon">🏠</span><span class="bnav-lbl">Home</span></div>
+      <div class="bnav-item"><span class="bnav-icon">📅</span><span class="bnav-lbl">Agenda</span></div>
+      <div class="bnav-item"><span class="bnav-icon">💰</span><span class="bnav-lbl">Guadagni</span></div>
+      <div class="bnav-item"><span class="bnav-icon">👤</span><span class="bnav-lbl">Profilo</span></div>
+    </nav>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+// ─── NAVIGATION ───
+let currentMode = 'client';
+const clientScreens = ['screen-home','screen-booking','screen-confirm','screen-reviews','screen-chat'];
+const workerScreens = ['screen-worker-home'];
+
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.display = 'flex';
+}
+
+function setMode(m) {
+  currentMode = m;
+  document.querySelectorAll('.mode-btn').forEach((b,i) => b.classList.toggle('active', (i===0 && m==='client')||(i===1 && m==='worker')));
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = ''; });
+  if (m === 'client') goTo('screen-home');
+  else goTo('screen-worker-home');
+}
+
+// ─── UI HELPERS ───
+function selChip(el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function singlePill(el) {
+  const g = el.closest('.pill-group');
+  g.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+}
+function selDate(el) {
+  document.querySelectorAll('.ditem').forEach(d => d.classList.remove('on'));
+  el.classList.add('on');
+}
+function selTime(el) {
+  if (el.classList.contains('na')) return;
+  document.querySelectorAll('.titem').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+function selPay(el) {
+  document.querySelectorAll('.pay-option').forEach(p => p.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('card-inputs').style.display =
+    el.querySelector('.pay-label').textContent.includes('Carta') ? 'block' : 'none';
+}
+
+// ─── WORKER TOGGLE ───
+function toggleWorkerStatus() {
+  const t = document.getElementById('worker-toggle');
+  const txt = document.getElementById('worker-status-txt');
+  t.classList.toggle('off');
+  if (t.classList.contains('off')) { txt.textContent = '🔴 Sei offline'; txt.style.color = '#9CA3AF'; }
+  else { txt.textContent = '🟢 Sei online'; txt.style.color = '#4ADE80'; }
+}
+
+function acceptReq(btn) {
+  const card = btn.closest('.req-card');
+  card.style.opacity = '0.5';
+  card.style.pointerEvents = 'none';
+  const acts = card.querySelector('.req-actions');
+  acts.innerHTML = '<div style="color:#4ADE80;font-size:13px;font-weight:700;padding:10px 0;">✓ Richiesta accettata!</div>';
+}
+function declineReq(btn) {
+  btn.closest('.req-card').style.display = 'none';
+}
+
+// ─── STAR RATING ───
+let selectedStars = 5;
+function setStar(n) {
+  selectedStars = n;
+  document.querySelectorAll('.star-btn').forEach((s,i) => s.classList.toggle('lit', i < n));
+}
+
+// ─── AI REVIEW GENERATOR ───
+async function generateReview() {
+  const input = document.getElementById('rev-input').value.trim();
+  const out = document.getElementById('ai-rev-output');
+  const pubBtn = document.getElementById('pub-rev-btn');
+  if (!input) { out.textContent = 'Scrivi prima qualcosa sulla tua esperienza!'; out.classList.add('show'); return; }
+
+  out.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+  out.classList.add('show');
+  pubBtn.style.display = 'none';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `Sei un assistente che aiuta gli utenti a scrivere recensioni per operatrici domestiche (colf, badanti) su un'app chiamata Cura. 
+Ricevi una descrizione informale dall'utente e la trasformi in una recensione dettagliata, naturale, autentica e utile in italiano.
+La recensione deve essere 3-5 frasi, menzionare dettagli specifici, essere positiva ma credibile.
+Rispondi SOLO con il testo della recensione, senza virgolette, senza prefissi.`,
+        messages: [{ role: 'user', content: `Stelle: ${selectedStars}/5\nEsperienza dell'utente: ${input}` }]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content?.[0]?.text || 'Errore nella generazione. Riprova.';
+    out.classList.remove('typing');
+    typeText(out, text, () => { pubBtn.style.display = 'flex'; });
+  } catch(e) {
+    out.textContent = 'Connessione non disponibile. Riprova più tardi.';
+  }
+}
+
+function typeText(el, text, cb) {
+  el.textContent = '';
+  let i = 0;
+  const iv = setInterval(() => {
+    el.textContent += text[i++];
+    if (i >= text.length) { clearInterval(iv); if(cb) cb(); }
+  }, 18);
+}
+
+function publishReview() {
+  const text = document.getElementById('ai-rev-output').textContent;
+  const newCard = document.createElement('div');
+  newCard.className = 'rev-card';
+  newCard.innerHTML = `
+    <div class="rc-header">
+      <div class="rc-ava">😊</div>
+      <div><div class="rc-name">Tu</div><div class="rc-date">Oggi</div></div>
+      <div class="rc-stars">${'⭐'.repeat(selectedStars)}</div>
+    </div>
+    <div class="rc-text">${text}</div>
+    <div class="rc-ai-badge">🤖 Scritta con AI Cura</div>`;
+  document.querySelector('.sec-label').after(newCard);
+  document.getElementById('ai-rev-output').classList.remove('show');
+  document.getElementById('pub-rev-btn').style.display = 'none';
+  document.getElementById('rev-input').value = '';
+  newCard.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─── AI CHAT ───
+const SYSTEM_PROMPT = `Sei Cura AI, l'assistente virtuale dell'app Cura - un marketplace italiano per trovare colf e badanti.
+Rispondi sempre in italiano, in modo caldo, professionale e conciso (massimo 3 frasi).
+Puoi aiutare l'utente a: trovare operatrici disponibili, capire i prezzi (colf 10-15€/h, badanti 12-18€/h), prenotare un servizio, gestire le prenotazioni, rispondere a domande sui pagamenti e sulle garanzie.
+Non inventare dati specifici di operatrici. Sii utile e guidalo verso la prenotazione quando appropriato.`;
+
+let chatHistory = [];
+
+async function sendChat() {
+  const inp = document.getElementById('chat-inp');
+  const msg = inp.value.trim();
+  if (!msg) return;
+  inp.value = '';
+  appendMsg('user', msg);
+  chatHistory.push({ role: 'user', content: msg });
+  const typingEl = appendTyping();
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: chatHistory
+      })
+    });
+    const data = await resp.json();
+    typingEl.remove();
+    const reply = data.content?.[0]?.text || 'Scusa, non ho capito. Riprova!';
+    chatHistory.push({ role: 'assistant', content: reply });
+    appendMsg('bot', reply);
+  } catch(e) {
+    typingEl.remove();
+    appendMsg('bot', 'Connessione non disponibile. Riprova tra poco! 🙏');
+  }
+}
+
+function sendQR(text) {
+  document.getElementById('chat-inp').value = text;
+  sendChat();
+}
+
+function appendMsg(role, text) {
+  const msgs = document.getElementById('chat-messages');
+  const d = document.createElement('div');
+  d.className = `msg ${role}`;
+  const now = new Date().toLocaleTimeString('it',{hour:'2-digit',minute:'2-digit'});
+  d.innerHTML = `<div class="msg-bubble">${text}</div><div class="msg-time">${now}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+  return d;
+}
+
+function appendTyping() {
+  const msgs = document.getElementById('chat-messages');
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+  d.innerHTML = '<div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+  return d;
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+</script>
+</body>
+</html>

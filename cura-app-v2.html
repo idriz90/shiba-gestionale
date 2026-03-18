@@ -1294,7 +1294,7 @@ window.handleKey = function(e) {
 }
 
 // ─── FIREBASE AUTH ───
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"; import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"; import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"; from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -1314,6 +1314,16 @@ let currentUser = null;
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
+  if (user) {
+    // Salva utente su Firestore
+    const userRef = doc(db, 'utenti', user.uid);
+    setDoc(userRef, {
+      email: user.email,
+      nome: user.displayName || '',
+      uid: user.uid,
+      creato: new Date().toISOString()
+    }, { merge: true });
+  }
   const successEl = document.getElementById('login-success');
   const formEl = document.getElementById('login-form-area');
   if (user) {

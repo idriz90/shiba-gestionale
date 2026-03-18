@@ -1494,11 +1494,11 @@ function mostraPdf(){
 }
 
 function stampaPdf(){
+  var w=window.open('','_blank');
+  if(!w){toast('Consenti i popup nel browser');return;}
   var content=document.getElementById('pdfContent').innerHTML;
   var css='<style>*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Arial,sans-serif;font-size:14px;color:#111;line-height:1.5}</style>';
   var html='<!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1">'+css+'</head><body>'+content+'</body></html>';
-  var w=window.open('','_blank');
-  if(!w){toast('Consenti i popup nel browser');return;}
   w.document.open();
   w.document.write(html);
   w.document.close();
